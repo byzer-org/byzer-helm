@@ -1,0 +1,7 @@
+apiVersion: v2
+appVersion: 1.2.3
+description: A Helm chart for Byzer-Notebook
+home: https://github.com/byzer-org/byzer-notebook
+name: byzer-notebook
+type: application
+version: 0.1.3
