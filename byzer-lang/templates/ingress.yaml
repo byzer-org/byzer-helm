@@ -19,7 +19,7 @@ metadata:
   labels:
     {{- include "byzer-lang.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
-  annotations:
+  annotations:    
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
