@@ -12,7 +12,7 @@ notebook:
 ## Byzer-lang URL
   mlsql.engine-url: http://byzer-lang-service.byzer:9003
   mlsql.auth-client: streaming.dsl.auth.client.DefaultConsoleClient
-  job.history.max-size: 2000
+  job.history.max-size: 100
   job.history.max-time: 30
 
 ## If true, please deploy DolphinScheduler

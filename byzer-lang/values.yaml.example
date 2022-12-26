@@ -21,25 +21,21 @@
 fs:
   cloud:
     storage:
-      enabled: false
+      enabled: true
   jfs.impl: io.juicefs.JuiceFileSystem
   AbstractFileSystem.jfs.impl: io.juicefs.JuiceFS
-  defaultFS: jfs://jfs_fs_name/
+  defaultFS: jfs://byjfs/
   
 juicefs:
-  name: jfs_fs_name
-  meta: meta_url
-  ## azure blob - wasb, aws s3 - s3, aliyun - oss
-  storage: storage_type
-  # 小写，请勿使用驼峰式
-  AccessKey: access_key
-  # 小写，请勿使用驼峰式
-  SecretKey: secret_key
-  bucket: bucket_full_url
+  name: byjfs
+  meta: mysql://xxxx:xxxx@(xxxxx:3306)/juicefs
   cache-dir: /tmp/jfs
   cache-size: 1024
   access-log: /work/logs/juicefs.access.log
   debug: true
+
+byzer:
+  mainJar: local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
 
 ## To use pvc
 pvc:
@@ -47,12 +43,12 @@ pvc:
   claimName: juicefs-pvc
   mountPath: /byzer
 
-clusterUrl: https://192.168.49.2:8443
+clusterUrl: https://192.168.3.58:16443
 
 ## Byzer-lang config
 streaming:
   executor.login.driver: true
-  datalake.path: /work/
+  datalake.path: /byzer/_delta
   enableHiveSupport: false
   plugin.clzznames: tech.mlsql.plugins.mllib.app.MLSQLMllib
 
@@ -60,9 +56,12 @@ spark:
   driver.memory: 4g
   driver.cores: 2
   driver.maxResultSize: 1g
+  driver.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar  
   executor.memory: 1g
   executor.cores: 1
   executor.instances: 1
+  executor.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar
+  
   hadoop.mapreduce.input.fileinputformat.list-status.num-threads: 10
   sql.cbo.enabled: true
   sql.joinReorder.enabled: true
@@ -89,15 +88,26 @@ spark:
 #  aws.glue.cache.db.ttl-mins: 30
 
 ## log4j2 config
-log4j2:
-  logger.executor.name: org.apache.spark.executor
-  logger.executor.level: warn
+# log4j2:
+#   logger.executor.name: org.apache.spark.executor
+#   logger.executor.level: warn
+
+replicaCount: 1
+minReadySeconds: 30
+
+readinessProbe:
+  initialDelaySeconds: 60
+  periodSeconds: 60
+
+livenessProbe:
+  initialDelaySeconds: 70
+  periodSeconds: 300
 
 image:
-  repository: byzer/byzer-lang-k8s
+  repository: localhost:32000/byzer-lang-k8s-base
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.3.0-2.4.0-SNAPSHOT"
+  tag: "3.3.0-latest"
   imagePullSecrets: []
 
 chart:
@@ -106,7 +116,8 @@ chart:
 
 serviceAccount:
   annotations: {}
-  name: "byzer"
+  name: byzer
+  create: false
 
 service:
   type: ClusterIP
@@ -151,13 +162,13 @@ container:
 
 ## Byzer-lang ingress 
 ingress:
-  enabled: false
+  enabled: true
   className: "nginx"
   path: /byzer-lang(/|$)(.*)
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
-    nginx.ingress.kubernetes.io/whitelist-source-range: 192.168.50.1/8
+    # nginx.ingress.kubernetes.io/whitelist-source-range: 192.168.50.1/8
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
