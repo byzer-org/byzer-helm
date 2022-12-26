@@ -37,10 +37,24 @@ spec:
             - /bin/sh
             - -c
           args:
-            - | 
-              /bin/bash << EOF
-              /home/deploy/byzer-lang/bin/byzer.sh start
-              tail -f /home/deploy/byzer-lang/logs/byzer.out
+            - cat << EOF | bash
+              spark-submit --master k8s://{{ .Values.clusterUrl }}
+              --deploy-mode client
+              --class streaming.core.StreamingApp            
+              --conf spark.kubernetes.namespace=$(BYZER_LANG_NAMESPACE)
+              --conf spark.driver.host=$(POD_IP)
+              --conf spark.mlsql.auth.access_token=mlsql 
+              --conf spark.mlsql.directquery.auth.enable=false            
+              {{ .Values.byzer.mainJar }}
+              -streaming.name byzer-lang
+              -streaming.rest true 
+              -streaming.thrift false
+              -streaming.platform spark              
+              -streaming.spark.service true
+              -streaming.job.cancel true                                      
+              {{- range $key, $value := .Values.streaming }}
+              streaming.{{- $key }} {{ $value }}
+              {{- end }}
               EOF
           ports:
             - name: http
@@ -65,6 +79,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+          - name: BYZER_LANG_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace      
           volumeMounts:
             - name: spark-conf
               mountPath: /work/spark-3.3.0-bin-hadoop3/conf
