@@ -162,7 +162,7 @@ livenessProbe:
   periodSeconds: 300
 
 image:
-  repository: localhost:32000/byzer-lang-k8s-base
+  repository: registry.cn-shanghai.aliyuncs.com/kyligence-byzer/byzer-lang-k8s-full
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "3.3.0-latest"

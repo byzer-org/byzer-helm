@@ -10,7 +10,7 @@ notebook:
 ## make sure /byzer is accessible in Byzer-lang 
   user.home: /work/users
 ## Byzer-lang URL
-  mlsql.engine-url: http://byzer-lang-service.byzer:9003
+  mlsql.engine-url: http://bz-byzer-lang-service.default.svc.cluster.local:9003
   mlsql.auth-client: streaming.dsl.auth.client.DefaultConsoleClient
   job.history.max-size: 100
   job.history.max-time: 30
@@ -21,7 +21,7 @@ notebook:
 ## Auth token of dolphin user byzerRobot
   scheduler.auth-token: xxx
 ## The notebook callback for scheduler, the url uses K8S internal DNS.
-  scheduler.callback-url: "http://byzer-notebook.byzer:9002"
+  scheduler.callback-url: "http://notebook-byzer-notebook-service.default.svc.cluster.local:9002"
 ## Byzer-Notebook's database config
   database.port: 3306
   database.name: notebook
