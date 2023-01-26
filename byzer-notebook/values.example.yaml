@@ -9,15 +9,20 @@ notebook:
 ## Byzer-lang will use this directory to save user's data. Please
 ## make sure /byzer is accessible in Byzer-lang 
   user.home: /work/users
+  url: "http://notebook-byzer-notebook-service.default.svc.cluster.local:9002"
 ## Byzer-lang URL
-  mlsql.engine-url: http://bz-byzer-lang-service.default.svc.cluster.local:9003
+  mlsql.engine-url: "http://bz-byzer-lang-service.default.svc.cluster.local:9003"
+  mlsql.engine-backup-url: "http://bz-byzer-lang-service.default.svc.cluster.local:9003"
+  mlsql.skipAuth: true
+  mlsql.fetchType: take
   mlsql.auth-client: streaming.dsl.auth.client.DefaultConsoleClient
+  job.output-size: 50
   job.history.max-size: 100
   job.history.max-time: 30
 
 ## If true, please deploy DolphinScheduler
   scheduler.enable: false
-  scheduler.scheduler-url: http://dolphin-api.flag-qa:12345/dolphinscheduler
+  scheduler.scheduler-url: "http://dolphin-api.flag-qa:12345/dolphinscheduler"
 ## Auth token of dolphin user byzerRobot
   scheduler.auth-token: xxx
 ## The notebook callback for scheduler, the url uses K8S internal DNS.
