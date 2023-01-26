@@ -2,8 +2,24 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+
+## Kubenertes Cluster URL
+clusterUrl: https://192.168.3.58:16443
+
+
 ## To use cloud storage, set fs.cloud.storage.enabled=true
 ## All fs.* go to core-site.xml
+
+## Aliyun OSS Example
+fs:
+  cloud:
+    storage:
+      enabled: true
+  oss.impl: org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem
+  defaultFS: oss://xxxxxx
+  oss.endpoint: oss-cn-hangzhou.aliyuncs.com
+  oss.accessKeyId: xxxxx
+  oss.accessKeySecret: xxxxx
 
 ## Azure Blob config  
 #fs:
@@ -17,51 +33,91 @@
 #  azure.delete.threads: 10
 #  azure.account.key.flagk8sstorage.blob.core.chinacloudapi.cn: abcdef
 
-## JuiceFS Settings using Hadoop SDK
-fs:
-  cloud:
-    storage:
-      enabled: true
-  jfs.impl: io.juicefs.JuiceFileSystem
-  AbstractFileSystem.jfs.impl: io.juicefs.JuiceFS
-  defaultFS: jfs://byjfs/
+## JuiceFS Example(Non-PVC)
+# fs:
+#   cloud:
+#     storage:
+#       enabled: true
+#   jfs.impl: io.juicefs.JuiceFileSystem
+#   AbstractFileSystem.jfs.impl: io.juicefs.JuiceFS
+#   defaultFS: jfs://byjfs/
   
-juicefs:
-  name: byjfs
-  meta: mysql://xxxx:xxxx@(xxxxx:3306)/juicefs
-  cache-dir: /tmp/jfs
-  cache-size: 1024
-  access-log: /work/logs/juicefs.access.log
-  debug: true
-
-byzer:
-  mainJar: local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
+# juicefs:
+#   name: byjfs
+#   meta: mysql://xxxx:xxxx@(xxxxx:3306)/juicefs
+#   cache-dir: /tmp/jfs
+#   cache-size: 1024
+#   access-log: /work/logs/juicefs.access.log
+#   debug: true
 
 ## To use pvc
-pvc:
-  enabled: false
-  claimName: juicefs-pvc
-  mountPath: /byzer
+# pvc:
+#   enabled: false
+#   claimName: juicefs-pvc
+#   mountPath: /byzer
 
-clusterUrl: https://192.168.3.58:16443
+## AWS S3 Example
+# fs:
+#   cloud:
+#     storage:
+#       enabled: true
+#   defaultFS: s3a://xxxxxx
+#   AbstractFileSystem.s3a.impl: org.apache.hadoop.fs.s3a.S3A
+#   s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem    
+#   s3a.endpoint: s3.ap-northeast-1.amazonaws.com
+#   s3a.bucket.xxxx.access.key: xxxxx
+#   s3a.bucket.xxxx.secret.key: xxxxx
 
-## Byzer-lang config
+## Azure Blob(abfs) Example
+# fs:
+#   cloud:
+#     storage:
+#       enabled: true
+#   abfs.impl: org.apache.hadoop.fs.azurebfs.AzureBlobFileSystem
+#   defaultFS: abfs://xxxxxx
+#   azure.account.auth.type.xxxxx.dfs.core.windows.net: SharedKey
+#   fs.azure.account.key.xxxxx.dfs.core.windows.net: xxxxx  
+
+## Huawei OBS Example
+# fs:
+#   cloud:
+#     storage:
+#       enabled: true
+#   obs.impl: org.apache.hadoop.fs.obs.OBSFileSystem
+#   AbstractFileSystem.obs.impl: org.apache.hadoop.fs.obs.OBSorg.apache.hadoop.fs.obs.OBS
+#   defaultFS: obs://xxxxxx
+#   obs.endpoint: obs.ap-southeast-3.myhuaweicloud.com
+#   obs.access.key: xxxxx
+#   obs.secret.key: xxxxx
+
+## Tencent Cos Example
+# fs:
+#   cloud:
+#     storage:
+#       enabled: true
+#   cosn.impl: org.apache.hadoop.fs.CosFileSystem
+#   AbstractFileSystem.cosn.impl: org.apache.hadoop.fs.CosN
+#   defaultFS: oss://xxxxxx
+#   cosn.userinfo.secretId: xxxxx
+#   cosn.userinfo.secretKey: xxxxx
+
+## Byzer-lang Config
 streaming:
   executor.login.driver: true
   datalake.path: /byzer/_delta
   enableHiveSupport: false
   plugin.clzznames: tech.mlsql.plugins.mllib.app.MLSQLMllib
 
+## Byzer Spark Runtime Config
 spark:
   driver.memory: 4g
   driver.cores: 2
-  driver.maxResultSize: 1g
-  driver.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar  
+  driver.maxResultSize: 1g  
   executor.memory: 1g
   executor.cores: 1
   executor.instances: 1
+  driver.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar  
   executor.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar
-  
   hadoop.mapreduce.input.fileinputformat.list-status.num-threads: 10
   sql.cbo.enabled: true
   sql.joinReorder.enabled: true
@@ -75,6 +131,8 @@ spark:
   scheduler.mode: FAIR
   kubernetes.allocation.driver.readinessTimeout: 60s
 
+byzer:
+  mainJar: local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
 # Hive config
 # When streaming.enableHiveSupport true, Hive config is applied.
 #hive:
