@@ -6,7 +6,6 @@ appVersion: 1.2.3
 description: Byzer Notebook is a SQL notebook for Byzer-lang.
 home: https://github.com/byzer-org/byzer-notebook
 icon: https://www.byzer.org/favicon.png
-
 sources:
   - https://github.com/byzer-org/byzer-helm/tree/master/byzer-notebook
 keywords:
@@ -14,8 +13,7 @@ keywords:
 - bigdata
 - machine-learning
 - byzer-lang
-
-name: byzer-notebook
+name: Byzer Notebook
 type: application
 version: 0.1.6
 
