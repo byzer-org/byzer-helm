@@ -4,7 +4,7 @@ Byzer helm project is desighed to help the users deploy Byzer-lang  and Byzer No
 
 ## Byzer-lang
 
-To create servicecount and role in Kubernetes for Byzer-lang Engine:
+Create servicecount and role in Kubernetes for Byzer-lang Engine:
 
 ```shell
 kubectl apply -f byzer-rbac.yaml
