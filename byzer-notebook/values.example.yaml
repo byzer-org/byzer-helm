@@ -15,6 +15,7 @@ notebook:
   mlsql.engine-backup-url: "http://bz-byzer-lang-service.default.svc.cluster.local:9003"
   mlsql.skipAuth: true
   mlsql.fetchType: take
+  mlsql.access_token: mlsql
   mlsql.auth-client: streaming.dsl.auth.client.DefaultConsoleClient
   job.output-size: 50
   job.history.max-size: 100
