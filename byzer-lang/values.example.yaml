@@ -6,7 +6,6 @@
 ## Kubenertes Cluster URL
 clusterUrl: https://192.168.3.58:16443
 
-
 ## To use cloud storage, set fs.cloud.storage.enabled=true
 ## All fs.* go to core-site.xml
 
@@ -51,10 +50,10 @@ fs:
 #   debug: true
 
 ## To use pvc
-# pvc:
-#   enabled: false
-#   claimName: juicefs-pvc
-#   mountPath: /byzer
+pvc:
+  enabled: false
+  claimName: juicefs-pvc
+  mountPath: /byzer
 
 ## AWS S3 Example
 # fs:
@@ -101,14 +100,14 @@ fs:
 #   cosn.userinfo.secretId: xxxxx
 #   cosn.userinfo.secretKey: xxxxx
 
-## Byzer-lang Config
+## Byzer Config
 streaming:
   executor.login.driver: true
   datalake.path: /byzer/_delta
   enableHiveSupport: false
   plugin.clzznames: tech.mlsql.plugins.mllib.app.MLSQLMllib
 
-## Byzer Spark Runtime Config
+## Byzer Runtime(Spark) Config
 spark:
   driver.memory: 4g
   driver.cores: 2
@@ -163,7 +162,7 @@ livenessProbe:
 
 image:
   repository: byzer/byzer-lang-k8s-full
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "3.3.0-latest"
   imagePullSecrets: []
@@ -175,7 +174,14 @@ chart:
 serviceAccount:
   annotations: {}
   name: byzer
-  create: false
+  create: true
+
+rbac:
+  create: true
+  rules: []
+
+auth:
+  usePasswordFiles: false
 
 service:
   type: ClusterIP
@@ -190,6 +196,21 @@ deployment:
     maxReplicas: 2
     targetCPUUtilizationPercentage: 100
     targetMemoryUtilizationPercentage: 100
+
+## Enable diagnostic mode in the deployment
+##
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  ##
+  enabled: false
+  ## @param diagnosticMode.command Command to override all containers in the deployment
+  ##
+  command:
+    - sleep
+  ## @param diagnosticMode.args Args to override all containers in the deployment
+  ##
+  args:
+    - infinity
 
 pod:
   nodeSelector: { }
@@ -222,7 +243,7 @@ container:
 ingress:
   enabled: true
   className: "nginx"
-  path: /byzer-lang(/|$)(.*)
+  path: /byzer/{{ .Release.Name }}(/|$)(.*)
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
