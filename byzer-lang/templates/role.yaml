@@ -1,6 +1,6 @@
-{{- if eq (include "byzer-lang.createSecret" .) "true" }}
-apiVersion: v1
-kind: Secret
+{{- if and .Values.serviceAccount.create  .Values.rbac.create }}
+apiVersion: {{ include "common.capabilities.rbac.apiVersion" . }}
+kind: ClusterRole
 metadata:
   name: {{ include "common.names.fullname" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
@@ -11,7 +11,11 @@ metadata:
   {{- if .Values.commonAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
-type: Opaque
-data:
-  CLUSTER_URL: {{ .Values.clusterUrl | b64enc }}  
-{{- end }}  
+rules:
+  - apiGroups: [""]
+    resources: ["pods","deployments", "replicas", "secrets", "configmaps","services","ingresses"]
+    verbs: ["*"]
+  {{- if .Values.rbac.rules }}
+  {{- include "common.tplvalues.render" ( dict "value" .Values.rbac.rules "context" $ ) | nindent 2 }}
+  {{- end }}
+{{- end }}

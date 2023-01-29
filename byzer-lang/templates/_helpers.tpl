@@ -60,3 +60,37 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Return the secret with byzer-lang credentials
+*/}}
+{{- define "byzer-lang.secretName" -}}
+    {{- if .Values.auth.existingSecret -}}
+        {{- printf "%s" (tpl .Values.auth.existingSecret $) -}}
+    {{- else -}}
+        {{- printf "%s" (include "common.names.fullname" .) -}}
+    {{- end -}}
+{{- end -}}
+
+{{/*
+Return true if a secret object should be created for MySQL
+*/}}
+{{- define "byzer-lang.createSecret" -}}
+{{- if and (not .Values.auth.existingSecret) (not .Values.auth.customPasswordFiles) }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns the available value for certain key in an existing secret (if it exists),
+otherwise it generates a random value.
+*/}}
+{{- define "getValueFromSecret" }}
+    {{- $len := (default 16 .Length) | int -}}
+    {{- $obj := (lookup "v1" "Secret" .Namespace .Name).data -}}
+    {{- if $obj }}
+        {{- index $obj .Key | b64dec -}}
+    {{- else -}}
+        {{- randAlphaNum $len -}}
+    {{- end -}}
+{{- end }}

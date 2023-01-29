@@ -1,6 +1,6 @@
-{{- if eq (include "byzer-lang.createSecret" .) "true" }}
-apiVersion: v1
-kind: Secret
+{{- if and .Values.serviceAccount.create .Values.rbac.create }}
+kind: ClusterRoleBinding
+apiVersion: {{ include "common.capabilities.rbac.apiVersion" . }}
 metadata:
   name: {{ include "common.names.fullname" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
@@ -11,7 +11,11 @@ metadata:
   {{- if .Values.commonAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
-type: Opaque
-data:
-  CLUSTER_URL: {{ .Values.clusterUrl | b64enc }}  
-{{- end }}  
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "byzer-lang.serviceAccountName" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "common.names.fullname" . -}}
+{{- end }}
