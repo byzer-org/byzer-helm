@@ -1,6 +1,9 @@
 # Default values for byzer-notebook.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+name: nb
+engine: bz
+domain: cluster.local
 
 notebook:
   port: 9002
@@ -9,10 +12,10 @@ notebook:
 ## Byzer-lang will use this directory to save user's data. Please
 ## make sure /byzer is accessible in Byzer-lang 
   user.home: /work/users
-  url: "http://notebook-byzer-notebook.byzer.svc.cluster.local:9002"
+  url: "http://{{- .Values.name -}}-byzer-notebook.{{- .Release.Namespace -}}.svc.{{- .Values.domain -}}:9002"
 ## Byzer-lang URL
-  mlsql.engine-url: "http://bz-byzer-lang-service.default.svc.cluster.local:9003"
-  mlsql.engine-backup-url: "http://bz-byzer-lang-service.default.svc.cluster.local:9003"
+  mlsql.engine-url: "http://{{- .Values.engine -}}-byzer-lang-service.{{- .Release.Namespace -}}.svc.{{- .Values.domain -}}:9003"
+  mlsql.engine-backup-url: "http://{{- .Values.engine -}}-byzer-lang-service.{{- .Release.Namespace -}}.svc.{{- .Values.domain -}}:9003"
   mlsql.skipAuth: true
   mlsql.fetchType: take
   mlsql.access_token: mlsql
@@ -27,13 +30,13 @@ notebook:
 ## Auth token of dolphin user byzerRobot
   scheduler.auth-token: xxx
 ## The notebook callback for scheduler, the url uses K8S internal DNS.
-  scheduler.callback-url: "http://notebook-byzer-notebook.byzer.svc.cluster.local:9002"
+  scheduler.callback-url: "http://{{- .Values.name -}}-byzer-notebook.{{- .Release.Namespace -}}.svc.{{- .Values.domain -}}:9002"
 ## Byzer-Notebook's database config
   database.port: 3306
   database.name: notebook
-  database.ip: "localhost"
-  database.username: "notebook"
-  database.password: "notebook"
+  database.ip: "127.0.0.1"
+  database.username: "byzer"
+  database.password: "byzer"
 
 replicaCount: 1
 minReadySeconds: 300
@@ -69,13 +72,14 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 9002
 
 ## Ingress is enabled by default.
 ingress:
-  enabled: false
+  enabled: true
   className: "nginx"
+  path: /
   annotations: 
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-body-size: 50m    

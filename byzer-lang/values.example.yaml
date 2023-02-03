@@ -4,7 +4,7 @@
 
 
 ## Kubenertes Cluster URL
-clusterUrl: https://192.168.3.58:16443
+clusterUrl: https://xx.xx.xx.xx:16443
 
 ## To use cloud storage, set fs.cloud.storage.enabled=true
 ## All fs.* go to core-site.xml
@@ -18,7 +18,7 @@ fs:
   defaultFS: oss://xxxxxx
   oss.endpoint: oss-cn-hangzhou.aliyuncs.com
   oss.accessKeyId: xxxxx
-  oss.accessKeySecret: xxxxx
+  oss.accessKeySecret: xxxxxx
 
 ## Azure Blob config  
 #fs:
