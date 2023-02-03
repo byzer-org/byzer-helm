@@ -13,7 +13,7 @@ keywords:
 - bigdata
 - machine-learning
 - byzer-lang
-name: Byzer-notebook
+name: byzer-notebook
 type: application
 version: 0.1.6
 
