@@ -10,7 +10,6 @@ helm repo add byzer http://store.mlsql.tech/charts
 
 ## Byzer-lang
 
-Create servicecount and role in Kubernetes for Byzer-lang Engine:
 
 ```shell
 helm install -n byzer --create-namespace bz byzer/Byzer-lang \
