@@ -42,18 +42,10 @@ spec:
               --deploy-mode client
               --class streaming.core.StreamingApp            
               --conf spark.kubernetes.namespace=$(BYZER_LANG_NAMESPACE)
-              --conf spark.driver.host=$(POD_IP)
-              --conf spark.mlsql.auth.access_token=mlsql 
-              --conf spark.mlsql.directquery.auth.enable=false            
-              {{ .Values.byzer.mainJar }}
-              -streaming.name byzer-lang
-              -streaming.rest true 
-              -streaming.thrift false
-              -streaming.platform spark              
-              -streaming.spark.service true
-              -streaming.job.cancel true                                      
+              --conf spark.driver.host=$(POD_IP)                                        
+              {{ .Values.byzer.mainJar }}                                        
               {{- range $key, $value := .Values.streaming }}
-              streaming.{{- $key }} {{ $value }}
+              -streaming.{{- $key }} {{ $value }}
               {{- end }}
               EOF
           ports:

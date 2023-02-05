@@ -106,6 +106,12 @@ streaming:
   datalake.path: /byzer/_delta
   enableHiveSupport: false
   plugin.clzznames: tech.mlsql.plugins.mllib.app.MLSQLMllib
+  name: byzer-lang
+  rest: true 
+  thrift: false
+  platform: spark              
+  spark.service: true
+  job.cancel: true 
 
 ## Byzer Runtime(Spark) Config
 spark:
@@ -129,6 +135,8 @@ spark:
   kryoserializer.buffer.max: 1024m
   scheduler.mode: FAIR
   kubernetes.allocation.driver.readinessTimeout: 60s
+  mlsql.directquery.auth.enable: false
+  mlsql.auth.access_token: mlsql
 
 byzer:
   mainJar: local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
