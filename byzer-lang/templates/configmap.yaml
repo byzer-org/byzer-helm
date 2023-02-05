@@ -14,7 +14,7 @@ data:
     </configuration>
   core-site-xml: |
     <configuration>
-      {{- if .Values.fs.cloud.storage.enabled }}    
+      {{- if .Values.fs.cloud.storage.enabled }}                  
         {{- range $key, $value := .Values.fs }}
         <property>
           <name>fs.{{- $key }}</name>
