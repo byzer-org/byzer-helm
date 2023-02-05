@@ -34,20 +34,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
-            - /bin/sh
-            - -c
-          args:
-            - cat << EOF | bash
-              spark-submit --master k8s://{{ .Values.clusterUrl }}
-              --deploy-mode client
-              --class streaming.core.StreamingApp            
-              --conf spark.kubernetes.namespace=$(BYZER_LANG_NAMESPACE)
-              --conf spark.driver.host=$(POD_IP)                                        
-              {{ .Values.byzer.mainJar }}                                        
-              {{- range $key, $value := .Values.streaming }}
-              -streaming.{{- $key }} {{ $value }}
-              {{- end }}
-              EOF
+            - /bin/bash
+            - /home/deploy/byzer-lang/run.sh          
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -78,6 +66,9 @@ spec:
           volumeMounts:
             - name: spark-conf
               mountPath: /work/spark-3.3.0-bin-hadoop3/conf
+            - name: run-sh
+              mountPath: /home/deploy/byzer-lang/run.sh
+              subPath: run.sh                
             - name: {{ include "byzer-lang.fullname" . }}-volume
               mountPath: {{ .Values.pvc.mountPath }}
             - name: byzer-properties-override
@@ -96,6 +87,13 @@ spec:
                 path: spark-defaults.conf
               - key: hive-site-xml
                 path: hive-site.xml
+        - name: run-sh          
+          configMap:
+            name: {{ include "byzer-lang.fullname" . }}-configmap
+            defaultMode: 0777
+            items:
+              - key: run-sh
+                path: run.sh                        
         - name: byzer-properties-override
           configMap:
             name: {{ include "byzer-lang.fullname" . }}-configmap

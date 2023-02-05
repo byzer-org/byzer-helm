@@ -3,6 +3,26 @@ kind: ConfigMap
 metadata:
   name: {{ include "byzer-lang.fullname" . }}-configmap
 data:
+  run-sh: |
+    #!/bin/bash    
+    export BYZER_HOME=/home/deploy/byzer-lang    
+    MAIN_JAR_PATH="${BYZER_HOME}/main/{{- .Values.byzer.mainJar }}"
+    EXECUTOR_JARS=$(echo ${BYZER_HOME}/libs/*.jar | tr ' ' ',')",$MAIN_JAR_PATH"
+    EXECUTOR_JARS=$(echo ${BYZER_HOME}/plugin/*.jar | tr ' ' ',')",$EXECUTOR_JARS"
+    DIRVER_JARS=$(echo ${BYZER_HOME}/libs/*.jar | tr ' ' ':')":$MAIN_JAR_PATH"              
+    DIRVER_JARS=$(echo ${BYZER_HOME}/plugin/*.jar | tr ' ' ':')":$DIRVER_JARS"
+    spark-submit --master k8s://{{ .Values.clusterUrl }} \
+    --deploy-mode client \
+    --class streaming.core.StreamingApp \
+    --jars $EXECUTOR_JARS \
+    --conf "spark.driver.extraClassPath=${DIRVER_JARS}" \
+    --conf spark.kubernetes.namespace=${BYZER_LANG_NAMESPACE} \
+    --conf spark.driver.host=${POD_IP}  \
+    ${MAIN_JAR_PATH} \
+    {{- range $key, $value := .Values.streaming }}
+    -streaming.{{- $key }} {{ $value }} \
+    {{- end }}
+    -streaming.nooop nooop    
   hive-site-xml: |
     <configuration>
       {{- range $key, $value := .Values.hive }}
