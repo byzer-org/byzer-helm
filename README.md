@@ -6,6 +6,7 @@ Byzer helm project is desighed to help the users deploy Byzer-lang  and Byzer No
 
 ```
 helm repo add byzer http://store.mlsql.tech/charts
+helm repo update
 ```
 
 ## Byzer-lang

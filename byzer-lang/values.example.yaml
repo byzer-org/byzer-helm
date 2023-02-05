@@ -120,9 +120,7 @@ spark:
   driver.maxResultSize: 1g  
   executor.memory: 1g
   executor.cores: 1
-  executor.instances: 1
-  driver.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-oss-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-cos-3.3_2.12-0.1.0-SNAPSHOT.jar
-  executor.extraClassPath: local:///home/deploy/byzer-lang/plugin/mlsql-assert-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-excel-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-ext-ets-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-shell-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/plugin/mlsql-mllib-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/juicefs-hadoop-1.0.0.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-obs-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-blob-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-s3-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-oss-3.3_2.12-0.1.0-SNAPSHOT.jar:local:///home/deploy/byzer-lang/libs/byzer-objectstore-cos-3.3_2.12-0.1.0-SNAPSHOT.jar
+  executor.instances: 1  
   hadoop.mapreduce.input.fileinputformat.list-status.num-threads: 10
   sql.cbo.enabled: true
   sql.joinReorder.enabled: true
@@ -139,7 +137,7 @@ spark:
   mlsql.auth.access_token: mlsql
 
 byzer:
-  mainJar: local:///home/deploy/byzer-lang/main/byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
+  mainJar: byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
 # Hive config
 # When streaming.enableHiveSupport true, Hive config is applied.
 #hive:
