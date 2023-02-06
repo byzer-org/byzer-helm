@@ -54,17 +54,17 @@ spec:
             periodSeconds: {{ .Values.pod.readinessProbe.periodSeconds }}
           resources:
             limits:
-              cpu: {{ mul (get .Values.spark "driver.cores")  1000 }}i
+              cpu: {{ get .Values.spark "driver.cores" | quote }}
               memory: {{ $driverMemory := (regexFind "[0-9]+" (get .Values.spark "driver.memory") |float64) -}}
                 {{ $num := (mulf $driverMemory (get .Values.spark "driver.memoryOverheadFactor" |float64 )) -}}
                 {{ $unit := ((regexFind "[a-zA-Z]+" (get .Values.spark "driver.memory"))|upper) -}}                
-                {{ (addf $num $driverMemory) -}}{{ $unit -}}i
+                "{{ (addf $num $driverMemory)|ceil -}}{{ $unit -}}i"
             requests:
-              cpu: {{ mul (get .Values.spark "driver.cores")  1000 }}i
+              cpu: {{ get .Values.spark "driver.cores" | quote }}
               memory: {{ $driverMemory := (regexFind "[0-9]+" (get .Values.spark "driver.memory") |float64) -}}
                 {{ $num := (mulf $driverMemory (get .Values.spark "driver.memoryOverheadFactor" |float64 )) -}}
                 {{ $unit := ((regexFind "[a-zA-Z]+" (get .Values.spark "driver.memory"))|upper) -}}                
-                {{ (addf $num $driverMemory) -}}{{ $unit -}}i
+                "{{ (addf $num $driverMemory)|ceil -}}{{ $unit -}}i"
           env:
           - name: POD_IP
             valueFrom:
