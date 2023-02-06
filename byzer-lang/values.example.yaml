@@ -135,6 +135,8 @@ spark:
   kubernetes.allocation.driver.readinessTimeout: 60s
   mlsql.directquery.auth.enable: false
   mlsql.auth.access_token: mlsql
+  driver.memoryOverheadFactor: 0.4
+  executor.memoryOverheadFactor: 0.4
 
 byzer:
   mainJar: byzer-lang-3.3.0-2.12-2.4.0-SNAPSHOT.jar
@@ -231,19 +233,6 @@ pod:
   livenessProbe:
     initialDelaySeconds: 30
     periodSeconds: 300
-
-container:
-  resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-# requests:
-#   cpu: 100m
-#   memory: 128Mi
 
 ## Byzer-lang ingress 
 ingress:

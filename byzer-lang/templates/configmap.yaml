@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "byzer-lang.fullname" . }}-configmap
 data:
-  run-sh: |
+  run-sh: |    
     #!/bin/bash    
     export BYZER_HOME=/home/deploy/byzer-lang    
     MAIN_JAR_PATH="${BYZER_HOME}/main/{{- .Values.byzer.mainJar }}"
@@ -65,7 +65,7 @@ data:
     spark.kubernetes.container.image {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
     spark.kubernetes.namespace {{ .Release.Namespace }}
 #  # Byzer config
-  byzer-properties-override: |-
+  byzer-properties-override: |-    
     {{- range $key, $value := .Values.streaming }}
     streaming.{{- $key }}={{ $value }}
     {{- end }}

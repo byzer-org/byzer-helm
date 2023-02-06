@@ -53,7 +53,18 @@ spec:
             initialDelaySeconds: {{ .Values.pod.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.pod.readinessProbe.periodSeconds }}
           resources:
-            {{- toYaml .Values.container.resources | nindent 12 }}
+            limits:
+              cpu: {{ mul (get .Values.spark "driver.cores")  1000 }}i
+              memory: {{ $driverMemory := (regexFind "[0-9]+" (get .Values.spark "driver.memory") |float64) -}}
+                {{ $num := (mulf $driverMemory (get .Values.spark "driver.memoryOverheadFactor" |float64 )) -}}
+                {{ $unit := ((regexFind "[a-zA-Z]+" (get .Values.spark "driver.memory"))|upper) -}}                
+                {{ (addf $num $driverMemory) -}}{{ $unit -}}i
+            requests:
+              cpu: {{ mul (get .Values.spark "driver.cores")  1000 }}i
+              memory: {{ $driverMemory := (regexFind "[0-9]+" (get .Values.spark "driver.memory") |float64) -}}
+                {{ $num := (mulf $driverMemory (get .Values.spark "driver.memoryOverheadFactor" |float64 )) -}}
+                {{ $unit := ((regexFind "[a-zA-Z]+" (get .Values.spark "driver.memory"))|upper) -}}                
+                {{ (addf $num $driverMemory) -}}{{ $unit -}}i
           env:
           - name: POD_IP
             valueFrom:
