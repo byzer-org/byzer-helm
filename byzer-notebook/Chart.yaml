@@ -15,7 +15,7 @@ keywords:
 - byzer-lang
 name: byzer-notebook
 type: application
-version: 0.1.8
+version: 0.1.9
 
 maintainers:
   - name: WilliamZhu
