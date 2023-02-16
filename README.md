@@ -94,10 +94,12 @@ executor:  (1g * 0.4(memoryOverheadFactor) + 1g) = 1400Mi
 
 ```shell
 helm install -n byzer --create-namespace nb byzer/Byzer-notebook \
---set name=nb \
---set engine=bz \
+--set name=nb-byzer-notebook \
+--set engine=bz-byzer-lang-service \
 --set domain=cluster.local \
 --set notebook."database\.ip"=192.168.3.14 \
 --set notebook."database\.username"=xxx \
 --set notebook."database\.password"=xxxx
 ```
+
+Notice that the name is the Byzer Notebook service name, and the engine is the byzer engine service name which the byzer notebook try to connect.

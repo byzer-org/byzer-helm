@@ -37,10 +37,25 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 9002
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
+          env:
+          - name: NOTEBOOK_MEMORY
+            value: {{ .Values.resources.memory | upper }}
+                   
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            limits:
+              cpu: {{ .Values.resources.cpu | quote }}
+              memory: {{ $driverMemory := (regexFind "[0-9]+" .Values.resources.memory |float64) -}}
+                {{ $num := (mulf $driverMemory ( .Values.resources.memoryOverheadFactor |float64 )) -}}
+                {{ $unit := ((regexFind "[a-zA-Z]+" ( .Values.resources.memory))|upper) -}}                
+                "{{ (addf $num $driverMemory)|ceil -}}{{ $unit -}}i"
+            requests:
+              cpu: {{ .Values.resources.cpu | quote }}
+              memory: {{ $driverMemory := (regexFind "[0-9]+" .Values.resources.memory |float64) -}}
+                {{ $num := (mulf $driverMemory ( .Values.resources.memoryOverheadFactor |float64 )) -}}
+                {{ $unit := ((regexFind "[a-zA-Z]+" ( .Values.resources.memory))|upper) -}}                
+                "{{ (addf $num $driverMemory)|ceil -}}{{ $unit -}}i"
           volumeMounts:
             - name: notebook-conf
               mountPath: /home/deploy/byzer-notebook/conf
