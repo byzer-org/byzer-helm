@@ -105,7 +105,7 @@ streaming:
   executor.login.driver: true
   datalake.path: /byzer/_delta
   enableHiveSupport: false
-  plugin.clzznames: tech.mlsql.plugins.mllib.app.MLSQLMllib
+  plugin.clzznames: tech.mlsql.plugins.ds.MLSQLExcelApp,tech.mlsql.plugins.assert.app.MLSQLAssert,tech.mlsql.plugins.shell.app.MLSQLShell,tech.mlsql.plugins.mllib.app.MLSQLMllib
   name: byzer-lang
   rest: true 
   thrift: false
