@@ -24,7 +24,9 @@ helm install -n byzer --create-namespace bz byzer/Byzer-lang \
 --set fs.impl=org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem \
 --set fs."oss\.endpoint"=oss-cn-hangzhou.aliyuncs.com \
 --set fs."oss\.accessKeyId"=xxxx \
---set fs."oss\.accessKeySecret"=xxxxx
+--set fs."oss\.accessKeySecret"=xxxxx \
+--set image.repository="registry.cn-shanghai.aliyuncs.com/kyligence-byzer/byzer-lang-k8s-full" \
+--set image.tag="3.3.0-2.4.0-SNAPSHOT-2023-02-16"
 ```
 
 Command with `--values values.[instance name].yaml`
@@ -99,7 +101,10 @@ helm install -n byzer --create-namespace nb byzer/Byzer-notebook \
 --set domain=cluster.local \
 --set notebook."database\.ip"=192.168.3.14 \
 --set notebook."database\.username"=xxx \
---set notebook."database\.password"=xxxx
+--set notebook."database\.password"=xxxx \
+--set image.repository="registry.cn-shanghai.aliyuncs.com/kyligence-byzer/byzer-notebook" \
+--set image.tag="1.2.3-2023-02-16"
 ```
 
 Notice that the name is the Byzer Notebook service name, and the engine is the byzer engine service name which the byzer notebook try to connect.
+
