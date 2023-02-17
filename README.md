@@ -15,7 +15,7 @@ helm repo update
 
 ## Byzer-lang
 
-Command with `--set`:
+### Command with `--set`:
 
 ```shell
 helm install -n byzer --create-namespace bz byzer/Byzer-lang \
@@ -29,14 +29,14 @@ helm install -n byzer --create-namespace bz byzer/Byzer-lang \
 --set image.tag="3.3.0-2.4.0-SNAPSHOT-2023-02-16"
 ```
 
-Command with `--values values.[instance name].yaml`
+### Command with `--values values.[instance name].yaml`
 
 
 ```shell
 helm install -n byzer --create-namespace bz byzer/Byzer-lang --values values.bz.yaml
 ```
 
-The content of `values.overwrite.yaml`:
+The content of `values.bz.yaml`:
 
 ```yaml
 clusterUrl: https://192.168.3.42:16443
@@ -48,24 +48,27 @@ fs:
   defaultFS: oss://xxxxxx
   oss.endpoint: oss-cn-hangzhou.aliyuncs.com
   oss.accessKeyId: xxxxx
-  oss.accessKeySecret: xxxxxx  
+  oss.accessKeySecret: xxxxxx 
+  
+image:
+  repository: registry.cn-shanghai.aliyuncs.com/kyligence-byzer/byzer-lang-k8s-full
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "3.3.0-2.4.0-SNAPSHOT-2023-02-16"    
 ```
 
 The more configuration examples of object store e.g. S3, Blob,Cos please check the [values.example.yaml](https://github.com/byzer-org/byzer-helm/blob/master/byzer-lang/values.example.yaml)
 
-If you want to deploy multi byzer-lang Engine, you should run it with different name and serviceAccount. For example: 
+If you want to deploy multi byzer-lang Engine instance, run it with different name and serviceAccount. For example. For example: 
 
 
 ```shell
 helm install -n byzer --create-namespace bmz byzer/Byzer-lang \
---set clusterUrl=https://192.168.3.42:16443 \
---set fs.defaultFS=oss://xxxx \
---set fs.impl=org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem \
---set fs."oss\.endpoint"=oss-cn-hangzhou.aliyuncs.com \
---set fs."oss\.accessKeyId"=xxxx \
---set fs."oss\.accessKeySecret"=xxxxx \
 --set serviceAccount.name=byzer-bmz
+...
 ```
+
+Here we set name as `bmz` and set serviceAccount.name as byzer-bmz.
 
 ### Resource
 
