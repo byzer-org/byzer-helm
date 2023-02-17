@@ -93,7 +93,41 @@ driver: ceil (4g * 0.4(memoryOverheadFactor) + 4g) = 6Gi
 executor:  (1g * 0.4(memoryOverheadFactor) + 1g) = 1400Mi
 ```
 
+## Remote Shuffle Service
 
+Example snippet like following: 
+
+```yaml
+spark:
+  shuffle.manager: org.apache.spark.shuffle.rss.RssShuffleManager  
+  rss.master.address: xxxxx:9097
+  serializer: org.apache.spark.serializer.KryoSerializer
+  rss.shuffle.writer.mode: hash
+  rss.push.data.replicate: true
+  shuffle.service.enabled: false
+  sql.adaptive.localShuffleReader.enabled: false
+  sql.adaptive.enabled: true
+  sql.adaptive.skewJoin.enabled: true
+```
+
+### Prometheus
+Example snippet like following: 
+
+```yaml
+spark:
+  ui.prometheus.enabled: true  
+  metrics.appStatusSource.enabled: true
+  kubernetes.driver.annotation.executors.prometheus.io/scrape: true
+  kubernetes.driver.annotation.executors.prometheus.io/path: /metrics/executors/prometheus
+  kubernetes.driver.annotation.executors.prometheus.io/port: 4040
+  kubernetes.driver.annotation.jmx.prometheus.io/scrape: true
+  kubernetes.driver.annotation.jmx.prometheus.io/path: /metrics
+  kubernetes.driver.annotation.jmx.prometheus.io/port: 8080
+  kubernetes.executor.annotation.jmx.prometheus.io/scrape: true
+  kubernetes.executor.annotation.jmx.prometheus.io/path: /metrics
+  kubernetes.executor.annotation.jmx.prometheus.io/port: 8080
+  metrics.conf.*.sink.jmx.class: org.apache.spark.metrics.sink.JmxSink
+```
 
 ## Byzer-notebook
 
