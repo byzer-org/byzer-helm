@@ -129,6 +129,50 @@ spark:
   metrics.conf.*.sink.jmx.class: org.apache.spark.metrics.sink.JmxSink
 ```
 
+### Add new jar to image
+
+Suppose the user want to add a new jar to Byzer-lang Image, the first step is to create 
+an new dockerfile. The content like following:
+
+```dockerfile
+# The base image includes
+# 1. OpenJDK8
+# 2. Spark 3.3.0-bin-hadoop3
+# Byzer-lang
+# Byzer-lang plugins
+# azure-hadoop shade jar
+# Directory structure
+# |- /work
+# |--- spark
+# |--- jdk
+# |- /home
+# |--- deploy
+# |------ byzer-lang
+# |-------- plugin
+# |-------- libs
+# |-------- main
+# |-------- bin
+# |-------- logs
+
+ARG TAG
+FROM byzer/byzer-lang-k8s-base:$TAG
+
+ADD https://download.byzer.org/byzer/misc/cloud/oss/byzer-objectstore-oss-3.3_2.12-0.1.0-SNAPSHOT.jar /home/deploy/byzer-lang/libs/
+ADD https://download.byzer.org/byzer/misc/rss-shuffle-manager-1.0.0-shaded.jar $SPARK_HOME/jars
+```
+
+Then build：
+
+```shell
+export BYZER_LANG_VERSION=${BYZER_LANG_VERSION:-2.4.0-SNAPSHOT}
+export SPARK_VERSION=${SPARK_VERSION:-3.3.0}
+
+docker build -t byzer/byzer-lang-k8s-full:"${SPARK_VERSION}-${BYZER_LANG_VERSION}" \
+--build-arg TAG="${SPARK_VERSION}-${BYZER_LANG_VERSION}" \
+-f "/byzer/full/Dockerfile" \
+"/byzer/full"
+```
+
 ## Byzer-notebook
 
 ```shell
