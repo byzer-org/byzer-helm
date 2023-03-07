@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "byzer-lang.fullname" . }}-deployment
+  labels:
+    {{- include "byzer-lang.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  minReadySeconds: {{ .Values.deployment.minReadySeconds }}
+  selector:
+    matchLabels: 
+      {{- include "byzer-lang.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      name: byzer-lang
+      {{- with .Values.pod.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "byzer-lang.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "byzer-lang.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.pod.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.pod.podSecurityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - /home/deploy/byzer-lang/run.sh          
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.pod.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.pod.livenessProbe.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.pod.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.pod.readinessProbe.periodSeconds }}
+          resources:
+            limits:
+              cpu: {{ get .Values.spark "driver.cores" | quote }}
+              memory: {{ $driverMemory := (regexFind "[0-9]+" (get .Values.spark "driver.memory") |float64) -}}
+                {{ $num := (mulf $driverMemory (get .Values.spark "driver.memoryOverheadFactor" |float64 )) -}}
+                {{ $unit := ((regexFind "[a-zA-Z]+" (get .Values.spark "driver.memory"))|upper) -}}                
+                "{{ (addf $num $driverMemory)|ceil -}}{{ $unit -}}i"
+            requests:
+              cpu: {{ get .Values.spark "driver.cores" | quote }}
+              memory: {{ $driverMemory := (regexFind "[0-9]+" (get .Values.spark "driver.memory") |float64) -}}
+                {{ $num := (mulf $driverMemory (get .Values.spark "driver.memoryOverheadFactor" |float64 )) -}}
+                {{ $unit := ((regexFind "[a-zA-Z]+" (get .Values.spark "driver.memory"))|upper) -}}                
+                "{{ (addf $num $driverMemory)|ceil -}}{{ $unit -}}i"
+          env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: BYZER_LANG_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          volumeMounts:
+            - name: spark-conf
+              mountPath: /work/spark-3.3.0-bin-hadoop3/conf
+            - name: run-sh
+              mountPath: /home/deploy/byzer-lang/run.sh
+              subPath: run.sh                
+            - name: {{ include "byzer-lang.fullname" . }}-volume
+              mountPath: {{ .Values.pvc.mountPath }}
+            - name: byzer-properties-override
+              mountPath: /home/deploy/byzer-lang/conf/byzer.properties.override
+              subPath: byzer.properties.override
+      volumes:
+        - name: spark-conf
+          configMap:
+            name: {{ include "byzer-lang.fullname" . }}-configmap
+            items:
+              - key: core-site-xml
+                path: core-site.xml
+              - key: log4j2-properties
+                path: log4j2.properties
+              - key: spark-defaults-conf
+                path: spark-defaults.conf
+              - key: hive-site-xml
+                path: hive-site.xml
+        - name: run-sh          
+          configMap:
+            name: {{ include "byzer-lang.fullname" . }}-configmap
+            defaultMode: 0777
+            items:
+              - key: run-sh
+                path: run.sh                        
+        - name: byzer-properties-override
+          configMap:
+            name: {{ include "byzer-lang.fullname" . }}-configmap
+            items:
+              - key: byzer-properties-override
+                path: byzer.properties.override
+        - name: {{ include "byzer-lang.fullname" . }}-volume
+          {{- if .Values.pvc.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.claimName }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      {{- with .Values.pod.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.pod.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
