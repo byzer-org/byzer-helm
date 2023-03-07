@@ -13,6 +13,12 @@ helm repo add byzer http://store.mlsql.tech/charts
 helm repo update
 ```
 
+Alternatively, you can use latest charts by:
+```shell
+helm repo add byzer http://byzer-org.github.io/byzer-helm
+helm repo update
+```
+
 ## Byzer-lang
 
 ### Command with `--set`:
