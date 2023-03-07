@@ -17,7 +17,6 @@ data:
     --jars $EXECUTOR_JARS \
     --conf "spark.driver.extraClassPath=${DIRVER_JARS}" \
     --conf spark.kubernetes.namespace=${BYZER_LANG_NAMESPACE} \
-    --conf spark.kubernetes.driver.pod.name=${POD_NAME} \
     --conf spark.driver.host=${POD_IP}  \
     ${MAIN_JAR_PATH} \
     {{- range $key, $value := .Values.streaming }}
