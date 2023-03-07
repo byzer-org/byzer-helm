@@ -1,5 +1,4 @@
-.idea/**
+.idea
 /byzer-lang/values.yaml
 /byzer-notebook/values.yaml
 /package.sh
-/charts
