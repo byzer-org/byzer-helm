@@ -1,6 +1,6 @@
 name: Lint and Test Charts
 
-on: pull_request
+on: [pull_request, workflow_dispatch]
 
 jobs:
   lint-test:
@@ -41,6 +41,9 @@ jobs:
 
       - name: Install bitnami repo
         run: helm repo  add bitnami https://charts.bitnami.com/bitnami
+
+      - name: cp and edit values.yaml
+        run: ./byzer-lang/cp_write_values_yaml.py
 
       - name: Run byzer-lang-testing (install)
         run: ct install --chart-dirs ./byzer-lang --charts byzer-lang
